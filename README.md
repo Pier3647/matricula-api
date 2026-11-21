@@ -26,7 +26,13 @@ Error: 422 CURSO_DE_OTRA_CARRERA.
 
 El curso AD5101 es de otra carrera (AE) y la alumna es de CI. Las validaciones de antes pasan: la alumna se matricula a si misma, existe, el curso existe y hay periodo abierto.
 
-![P1](capturas/p1.png)
+![P1 escenario 1](capturas/p1-1.png)
+
+![P1 escenario 2](capturas/p1-2.png)
+
+![P1 escenario 3](capturas/p1-3.png)
+
+![P1 resultado](capturas/p1-4.png)
 
 ## Pregunta 2
 
@@ -45,7 +51,15 @@ El curso AD5101 es de otra carrera (AE) y la alumna es de CI. Las validaciones d
 - El accessToken nuevo no sirve porque al reusar el refresh token la API cierra todas las sesiones del usuario.
 - Con la clave correcta no entra porque la cuenta queda bloqueada 15 minutos y la API revisa el bloqueo antes que la clave.
 
-![P2](capturas/p2.png)
+![P2 escenario 1](capturas/p2-1.png)
+
+![P2 escenario 2](capturas/p2-2.png)
+
+![P2 escenario 3](capturas/p2-3.png)
+
+![P2 escenario 4](capturas/p2-4.png)
+
+![P2 resultado](capturas/p2-5.png)
 
 ## Pregunta 3
 
@@ -58,7 +72,15 @@ Notas que ya tenia Rosa: LP5401 = 15 (4 creditos), AS5402 = 16 (3 creditos). PI5
 
 Con 12.5 la prueba falla: como el feature esta en español, Cucumber toma el punto como separador de miles y lee 125. La API responde 400 porque la nota maxima es 20.
 
-![P3](capturas/p3.png)
+![P3 nota 14](capturas/p3-1.png)
+
+![P3 nota 12,5](capturas/p3-2.png)
+
+![P3 docente sin permiso](capturas/p3-3.png)
+
+![P3 matricula no pagada](capturas/p3-4.png)
+
+![P3 resultado](capturas/p3-5.png)
 
 ![P3 con 12.5](capturas/p3-punto.png)
 
