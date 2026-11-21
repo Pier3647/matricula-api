@@ -1,3 +1,71 @@
+# T1 - Pruebas de Software
+
+- Alumno: Pier Anderson Olivares Sanchez
+- Codigo: i202505314
+- D = 4
+
+## Como ejecutar
+
+1. Levantar la API: `./mvnw spring-boot:run`
+2. Reiniciar la API antes de cada prueba.
+3. Ejecutar:
+   - P1: `./mvnw clean verify -Dcucumber.filter.tags="@P1"`
+   - P2: `./mvnw clean verify -Dcucumber.filter.tags="@P2"`
+   - P3: `./mvnw clean verify -Dcucumber.filter.tags="@P3 and not @punto-decimal"`
+   - P3 con 12.5: `./mvnw clean verify -Dcucumber.filter.tags="@punto-decimal"`
+
+## Pregunta 1
+
+Datos: alumno i202610003, curso TS5514, metodo YAPE, accion que falla: matricularse en AD5101.
+
+| Creditos | Subtotal | Descuento | Total |
+|---|---|---|---|
+| 4 | 4 x 120 = 480 | 0% (promedio 12) | 480 |
+
+Error: 422 CURSO_DE_OTRA_CARRERA.
+
+El curso AD5101 es de otra carrera (AE) y la alumna es de CI. Las validaciones de antes pasan: la alumna se matricula a si misma, existe, el curso existe y hay periodo abierto.
+
+![P1](capturas/p1.png)
+
+## Pregunta 2
+
+| Escenario | HTTP | codigo |
+|---|---|---|
+| Primer refresh | 200 | - |
+| Refresh original otra vez | 401 | REFRESH_REUTILIZADO |
+| accessToken nuevo despues | 401 | TOKEN_INVALIDO |
+| Logout | 204 | - |
+| Perfil despues del logout | 401 | TOKEN_INVALIDO |
+| Intentos 1 a 4 con clave mala | 401 | CREDENCIALES_INVALIDAS |
+| Intento 5 con clave mala | 423 | CUENTA_BLOQUEADA |
+| Clave correcta despues | 423 | CUENTA_BLOQUEADA |
+| Alumno lista alumnos | 403 | ACCESO_DENEGADO |
+
+- El accessToken nuevo no sirve porque al reusar el refresh token la API cierra todas las sesiones del usuario.
+- Con la clave correcta no entra porque la cuenta queda bloqueada 15 minutos y la API revisa el bloqueo antes que la clave.
+
+![P2](capturas/p2.png)
+
+## Pregunta 3
+
+Notas que ya tenia Rosa: LP5401 = 15 (4 creditos), AS5402 = 16 (3 creditos). PI5620 tiene 6 creditos.
+
+| Nota | Calculo | Promedio | Condicion | Creditos aprobados |
+|---|---|---|---|---|
+| 14 | (15x4 + 16x3 + 14x6) / 13 = 192 / 13 | 14.77 | APROBADO | 13 |
+| 12,5 | (15x4 + 16x3 + 12.5x6) / 13 = 183 / 13 | 14.08 | DESAPROBADO | 7 |
+
+Con 12.5 la prueba falla: como el feature esta en español, Cucumber toma el punto como separador de miles y lee 125. La API responde 400 porque la nota maxima es 20.
+
+![P3](capturas/p3.png)
+
+![P3 con 12.5](capturas/p3-punto.png)
+
+![Reporte Serenity](capturas/serenity.png)
+
+---
+
 # matricula-api
 
 API REST de matrícula para el curso Pruebas de Software (CIBERTEC). Se usa como sistema bajo prueba en los ejercicios de BDD con Gherkin, Cucumber, Serenity y Rest Assured.
