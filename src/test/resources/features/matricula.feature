@@ -1,28 +1,35 @@
-Feature: : Matricula de cursos
-  Como alumno de CIBERTEC
-  Quiero matricularme en mis cursos
-  Para llevarlos en el ciclo
+# language: es
+@P1
+Característica: Matrícula del alumno
+  Como alumno
+  Quiero matricularme y pagar mi curso
+  Para llevarlo en el ciclo
 
-  Scenario: Matricula valida con descuento por promedio y anulacion
-    Given  que Ana consulta la API de matricula
-    When se matricula con el codigo "i202610001" en el curso "PS3511"
-    Then el codigo de respuesta es 201
-    And el monto de la matricula es 288,0
-    And el estado de la matricula es "REGISTRADA"
-    When anula es matricula
-    Then el codigo de respuesta es 200
-    And el estado de la matricula es "ANULADA"
+  Antecedentes:
+    Dado que el alumno "i202610003" inicia sesion con la clave "Cibertec2026"
 
-  Scenario Outline: Matricula rechazada por <motivo>
-    Given  que Ana consulta la API de matricula
-    When se matricula por codigo "<alumno>" en el curso "<curso>"
-    Then el codigo de respuesta es <status>
-    And el codigo de error es "<codigo>"
-    Examples:
-      | motivo             | alumno     | curso  | status | codigo               |
-      | deuda              | i202610004 | PS5511 | 422    | ALUMNO_CON_DEUDA     |
-      | duplicada          | i202610003 | IA5513 | 409    | MATRICULA_DUPLICADA  |
-      | falta de vacantes  | i202610001 | IA5513 | 409    | SIN_VACANTES         |
-      | cruce de horario   | i202610002 | QA5517 | 409    | CRUCE_HORARIO        |
-      | límite de créditos | i202610005 | TS5514 | 422    | LIMITE_CREDITOS      |
-      | alumno inexistente | i999999999 | PS5511 | 404    | ALUMNO_NO_ENCONTRADO |
+  Escenario: Cotizar el curso TS5514
+    Cuando cotiza el curso "TS5514"
+    Entonces el codigo HTTP es 200
+    Y la cotizacion tiene 4 creditos, subtotal 480,0, descuento de 0 por ciento y total 480,0
+
+  Escenario: Matricularse y pagar el curso TS5514
+    Dado cotiza el curso "TS5514"
+    Cuando se matricula en el curso "TS5514"
+    Entonces el codigo HTTP es 201
+    Y la matricula queda en estado "REGISTRADA"
+    Y el monto de la matricula es 480,0 y coincide con el total cotizado
+    Y el cuerpo cumple el esquema "matricula.json"
+    Cuando paga la matricula con el metodo "YAPE"
+    Entonces el codigo HTTP es 200
+    Y la matricula queda en estado "PAGADA"
+    Y la fecha de pago tiene valor
+    Cuando consulta sus pagos
+    Entonces el codigo HTTP es 200
+    Y existe el pago de su matricula con el metodo "YAPE" y numero de operacion con formato OP-000000
+
+  Escenario: Regla de negocio que debe fallar al matricularse en AD5101
+    Cuando se matricula en el curso "AD5101"
+    Entonces el codigo HTTP es 422
+    Y el error tiene el codigo "CURSO_DE_OTRA_CARRERA"
+    Y el cuerpo cumple el esquema "error.json"
